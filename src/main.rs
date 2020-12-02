@@ -31,9 +31,14 @@ pub fn solve_day1_part_2() {
 
 pub fn solve_day2() {
     let input = open_file(&get_filename("day2"));
-    print_result("Day 2", &day2::solve(&input))
+    print_result("Day 2", &day2::solve(&input, day2::CharCountPolicy))
+}
+
+pub fn solve_day2_part_2() {
+    let input = open_file(&get_filename("day2"));
+    print_result("Day 2 part 2", &day2::solve(&input, day2::CharPositionPolicy))
 }
 
 fn main() {
-    solve_day2();
+    solve_day2_part_2();
 }
