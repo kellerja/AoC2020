@@ -3,6 +3,7 @@ use std::fmt;
 
 mod day1;
 mod day2;
+mod day3;
 
 fn open_file(filename: &str) -> File {
     File::open(&filename).expect(&format!("Could not open file {}", filename))
@@ -39,6 +40,11 @@ pub fn solve_day2_part_2() {
     print_result("Day 2 part 2", &day2::solve(&input, day2::CharPositionPolicy))
 }
 
+pub fn solve_day3() {
+    let input = open_file(&get_filename("day3"));
+    print_result("Day 3", &day3::solve(&input))
+}
+
 fn main() {
-    solve_day2_part_2();
+    solve_day3();
 }
