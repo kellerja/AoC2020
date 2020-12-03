@@ -42,9 +42,15 @@ pub fn solve_day2_part_2() {
 
 pub fn solve_day3() {
     let input = open_file(&get_filename("day3"));
-    print_result("Day 3", &day3::solve(&input))
+    print_result("Day 3", &day3::solve(&input, &day3::PART_1_SLOPES.to_vec()))
+}
+
+pub fn solve_day3_part_2() {
+    let input = open_file(&get_filename("day3"));
+    print_result("Day 3 part 2", &day3::solve(&input, &day3::PART_2_SLOPES.to_vec()))
 }
 
 fn main() {
     solve_day3();
+    solve_day3_part_2();
 }
