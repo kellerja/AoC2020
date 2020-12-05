@@ -64,9 +64,13 @@ pub fn solve_day4_part_2() {
 
 pub fn solve_day5() {
     let input = open_file(&get_filename("day5"));
-    print_result("Day 5", &day5::solve(&input))
+    print_result("Day 5", &day5::solve(&input, day5::SearchCriteria::HIGHEST))
+}
+
+pub fn solve_day5_part_2() {
+    let input = open_file(&get_filename("day5"));
+    print_result("Day 5 part 2", &day5::solve(&input, day5::SearchCriteria::EMPTY))
 }
 
 fn main() {
-    solve_day5();
 }
