@@ -62,6 +62,11 @@ pub fn solve_day4_part_2() {
     print_result("Day 4 part 2", &day4::solve(&input, day4::FieldValueValidator))
 }
 
+pub fn solve_day5() {
+    let input = open_file(&get_filename("day5"));
+    print_result("Day 5", &day5::solve(&input))
+}
 
 fn main() {
+    solve_day5();
 }
