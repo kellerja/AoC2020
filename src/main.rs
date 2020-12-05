@@ -4,6 +4,7 @@ use std::fmt;
 mod day1;
 mod day2;
 mod day3;
+mod day4;
 
 fn open_file(filename: &str) -> File {
     File::open(&filename).expect(&format!("Could not open file {}", filename))
@@ -50,7 +51,11 @@ pub fn solve_day3_part_2() {
     print_result("Day 3 part 2", &day3::solve(&input, &day3::PART_2_SLOPES.to_vec()))
 }
 
+pub fn solve_day4() {
+    let input = open_file(&get_filename("day4"));
+    print_result("Day 4", &day4::solve(&input))
+}
+
 fn main() {
-    solve_day3();
-    solve_day3_part_2();
+    solve_day4();
 }
