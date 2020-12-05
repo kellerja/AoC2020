@@ -53,9 +53,14 @@ pub fn solve_day3_part_2() {
 
 pub fn solve_day4() {
     let input = open_file(&get_filename("day4"));
-    print_result("Day 4", &day4::solve(&input))
+    print_result("Day 4", &day4::solve(&input, day4::FieldPresenceValidator))
 }
 
+pub fn solve_day4_part_2() {
+    let input = open_file(&get_filename("day4"));
+    print_result("Day 4 part 2", &day4::solve(&input, day4::FieldValueValidator))
+}
+
+
 fn main() {
-    solve_day4();
 }
