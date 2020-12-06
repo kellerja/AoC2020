@@ -75,9 +75,13 @@ pub fn solve_day5_part_2() {
 
 pub fn solve_day6() {
     let input = open_file(&get_filename("day6"));
-    print_result("Day 6", &day6::solve(&input))
+    print_result("Day 6", &day6::solve(&input, &day6::AnyonesAnswer))
+}
+
+pub fn solve_day6_part_2() {
+    let input = open_file(&get_filename("day6"));
+    print_result("Day 6 part 2", &day6::solve(&input, &day6::EveryonesAnswer))
 }
 
 fn main() {
-    solve_day6();
 }
