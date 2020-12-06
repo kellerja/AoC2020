@@ -73,5 +73,11 @@ pub fn solve_day5_part_2() {
     print_result("Day 5 part 2", &day5::solve(&input, day5::SearchCriteria::EMPTY))
 }
 
+pub fn solve_day6() {
+    let input = open_file(&get_filename("day6"));
+    print_result("Day 6", &day6::solve(&input))
+}
+
 fn main() {
+    solve_day6();
 }
