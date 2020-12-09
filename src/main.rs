@@ -86,9 +86,13 @@ pub fn solve_day6_part_2() {
 
 pub fn solve_day7() {
     let input = open_file(&get_filename("day7"));
-    print_result("Day 7", &day7::solve(&input))
+    print_result("Day 7", &day7::solve(&input, &day7::UniqueRootsCounter))
+}
+
+pub fn solve_day7_part_2() {
+    let input = open_file(&get_filename("day7"));
+    print_result("Day 7 part 2", &day7::solve(&input, &day7::BagCapacityCounter))
 }
 
 fn main() {
-    solve_day7();
 }
