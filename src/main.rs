@@ -8,6 +8,7 @@ mod day4;
 mod day5;
 mod day6;
 mod day7;
+mod day8;
 
 fn open_file(filename: &str) -> File {
     File::open(&filename).expect(&format!("Could not open file {}", filename))
@@ -94,5 +95,11 @@ pub fn solve_day7_part_2() {
     print_result("Day 7 part 2", &day7::solve(&input, &day7::BagCapacityCounter))
 }
 
+pub fn solve_day8() {
+    let input = open_file(&get_filename("day8"));
+    print_result("Day 8", &day8::solve(&input))
+}
+
 fn main() {
+    solve_day8()
 }
