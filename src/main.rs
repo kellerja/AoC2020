@@ -97,9 +97,15 @@ pub fn solve_day7_part_2() {
 
 pub fn solve_day8() {
     let input = open_file(&get_filename("day8"));
-    print_result("Day 8", &day8::solve(&input))
+    print_result("Day 8", &day8::solve(&input, false))
+}
+
+pub fn solve_day8_part_2() {
+    let input = open_file(&get_filename("day8"));
+    print_result("Day 8 part 2", &day8::solve(&input, true))
 }
 
 fn main() {
-    solve_day8()
+    solve_day8();
+    solve_day8_part_2();
 }
