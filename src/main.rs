@@ -107,10 +107,16 @@ pub fn solve_day8_part_2() {
 }
 
 pub fn solve_day9() {
+    const PREAMBLE_SIZE: usize = 25;
     let input = open_file(&get_filename("day9"));
-    print_result("Day 9", &day9::solve(&input))
+    print_result("Day 9", &day9::solve(&input, PREAMBLE_SIZE).0)
+}
+
+pub fn solve_day9_part_2() {
+    const PREAMBLE_SIZE: usize = 25;
+    let input = open_file(&get_filename("day9"));
+    print_result("Day 9 part 2", &day9::solve(&input, PREAMBLE_SIZE).1)
 }
 
 fn main() {
-    solve_day9()
 }
