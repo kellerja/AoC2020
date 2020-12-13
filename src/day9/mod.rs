@@ -2,18 +2,23 @@ use std::fs::File;
 use std::io::BufReader;
 use std::io::prelude::*;
 
-fn find_preamble_sum(numbers: &[usize], preamble_size: usize, target_index: usize) -> Option<(usize, usize)> {
-    let number = *numbers.get(target_index).unwrap();
-
-    let preamble_start = target_index - preamble_size;
-    let preamble_end = target_index;
-    for start_i in preamble_start..preamble_end - 1 {
-        let a = numbers.get(start_i).unwrap();
-        for end_i in start_i + 1..preamble_end {
-            let b = numbers.get(end_i).unwrap();
-            if a + b == number {
-                return Some((*a, *b))
+fn find_pair_with_sum(array: &[usize], sum: usize) -> Option<(usize, usize)> {
+    for (a_idx, a) in array.iter().enumerate() {
+        for (b_idx, b) in array[a_idx + 1..].iter().enumerate() {
+            if a + b == sum {
+                return Some((a_idx, b_idx))
             }
+        }
+    }
+    None
+}
+
+fn find_number_without_preable_sum(numbers: &[usize], preamble_size: usize) -> Option<usize> {
+    let preamble_iterator = numbers.windows(preamble_size);
+    for (i, preamble) in preamble_iterator.enumerate() {
+        let target = numbers[i + preamble_size];
+        if find_pair_with_sum(preamble, target).is_none() {
+            return Some(target)
         }
     }
     None
@@ -22,12 +27,7 @@ fn find_preamble_sum(numbers: &[usize], preamble_size: usize, target_index: usiz
 pub fn solve(input: &File) -> Option<usize> {
     const PREAMBLE_SIZE: usize = 25;
     let numbers = parse_input(input);
-    for i in PREAMBLE_SIZE..numbers.len() {
-        if find_preamble_sum(&numbers, PREAMBLE_SIZE, i).is_none() {
-            return Some(*numbers.get(i).unwrap())
-        }
-    }
-    None
+    find_number_without_preable_sum(&numbers, PREAMBLE_SIZE)
 }
 
 fn parse_input(input: &File) -> Vec<usize> {
