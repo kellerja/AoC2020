@@ -121,9 +121,13 @@ pub fn solve_day9_part_2() {
 
 pub fn solve_day10() {
     let input = open_file(&get_filename("day10"));
-    print_result("Day 10", &day10::solve(&input))
+    print_result("Day 10", &day10::solve(&input, &day10::GreedyConnectionDiffMultiplication))
+}
+
+pub fn solve_day10_part_2() {
+    let input = open_file(&get_filename("day10"));
+    print_result("Day 10 part 2", &day10::solve(&input, &day10::ConnectionCombinationCount))
 }
 
 fn main() {
-    solve_day10()
 }
