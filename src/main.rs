@@ -132,9 +132,13 @@ pub fn solve_day10_part_2() {
 
 pub fn solve_day11() {
     let input = open_file(&get_filename("day11"));
-    print_result("Day 11", &day11::solve(&input))
+    print_result("Day 11", &day11::solve(&input, &day11::CloseNeighbourConfiguration))
+}
+
+pub fn solve_day11_part_2() {
+    let input = open_file(&get_filename("day11"));
+    print_result("Day 11 part 2", &day11::solve(&input, &day11::VisibleNeighbourConfiguration))
 }
 
 fn main() {
-    solve_day11();
 }
