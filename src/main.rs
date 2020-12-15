@@ -143,9 +143,19 @@ pub fn solve_day11_part_2() {
 
 pub fn solve_day12() {
     let input = open_file(&get_filename("day12"));
-    print_result("Day 12", &day12::solve(&input))
+    let mut boat = day12::BoatByItself::default();
+    day12::solve(&input, &mut boat);
+    print_result("Day 12", &Some(boat.location.manhattan_distance_from_origin()))
+}
+
+pub fn solve_day12_part_2() {
+    let input = open_file(&get_filename("day12"));
+    let mut boat = day12::BoatByWaypoint::default();
+    day12::solve(&input, &mut boat);
+    print_result("Day 12 part 2", &Some(boat.location.manhattan_distance_from_origin()))
 }
 
 fn main() {
     solve_day12();
+    solve_day12_part_2();
 }

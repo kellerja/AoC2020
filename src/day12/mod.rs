@@ -3,24 +3,72 @@ use std::io::BufReader;
 use std::io::prelude::*;
 use std::ops::Add;
 
+pub trait Mover {
+    fn step(&mut self, m: Move) -> &Location;
+}
+
+pub struct BoatByWaypoint {
+    pub location: Location,
+    waypoint: Location
+}
+
+impl BoatByWaypoint {
+    pub fn default() -> Self {
+        Self {
+            location: Location::new(0, 0, 0),
+            waypoint: Location::new(10, 1, 0)
+        }
+    }
+}
+
+impl Mover for BoatByWaypoint {
+    fn step(&mut self, m: Move) -> &Location {
+        let delta = m.delta_with_anchor(&self.waypoint, &self.location);
+        if let Move::FORWARD(_) = m {
+            self.location = self.location + delta;
+        }
+        self.waypoint = self.waypoint + delta;
+        &self.location
+    }
+}
+
+pub struct BoatByItself {
+    pub location: Location
+}
+
+impl BoatByItself {
+    pub fn default() -> Self {
+        Self {
+            location: Location::new(0, 0, 90)
+        }
+    }
+}
+
+impl Mover for BoatByItself {
+    fn step(&mut self, m: Move) -> &Location {
+        self.location = self.location + m.delta(&self.location);
+        &self.location
+    }
+}
+
 #[derive(Copy, Clone, PartialEq, Eq)]
-struct Location {
+pub struct Location {
     x: isize,
     y: isize,
     bearing: isize
 }
 
 impl Location {
-    fn new(x: isize, y: isize, bearing: isize) -> Location {
-        Location { x, y, bearing: bearing % 360 }
-    }
-
-    fn default() -> Location {
-        Location::new(0, 0, 90)
+    fn new(x: isize, y: isize, bearing: isize) -> Self {
+        Self { x, y, bearing: bearing % 360 }
     }
 
     fn manhattan_distance_from(&self, other: &Location) -> isize {
         (self.x - other.x).abs() + (self.y - other.y).abs()
+    }
+
+    pub fn manhattan_distance_from_origin(&self) -> isize {
+        self.manhattan_distance_from(&Location::new(0, 0, 0))
     }
 }
 
@@ -36,7 +84,8 @@ impl Add for Location {
     }
 }
 
-enum Move {
+#[derive(PartialEq, Eq)]
+pub enum Move {
     NORTH(isize),
     SOUTH(isize),
     EAST(isize),
@@ -61,16 +110,36 @@ impl Move {
             }
         }
     }
+
+    fn delta_with_anchor(&self, other: &Location, anchor: &Location) -> Location {
+        match self {
+            Move::LEFT(amount) => {
+                let rotation = (*amount as f64).to_radians();
+                let zero_x = other.x - anchor.x;
+                let zero_y = other.y - anchor.y;
+                let x = zero_x * rotation.cos() as isize - zero_y * rotation.sin() as isize;
+                let y = zero_x * rotation.sin() as isize + zero_y * rotation.cos() as isize;
+                Location::new(x - other.x + anchor.x, y - other.y + anchor.y, 0)
+            },
+            Move::RIGHT(amount) => {
+                let rotation = (*amount as f64).to_radians();
+                let zero_x = other.x - anchor.x;
+                let zero_y = other.y - anchor.y;
+                let x = zero_x * rotation.cos() as isize + zero_y * rotation.sin() as isize;
+                let y = -zero_x * rotation.sin() as isize + zero_y * rotation.cos() as isize;
+                Location::new(x - other.x + anchor.x, y - other.y + anchor.y, 0)
+            },
+            Move::FORWARD(amount) => Location::new((other.x - anchor.x) * amount, (other.y - anchor.y)  * amount, 0),
+            _ => self.delta(other)
+        }
+    }
 }
 
-pub fn solve(input: &File) -> Option<isize> {
+pub fn solve(input: &File, mover: &mut impl Mover) {
     let moves = parse_input(input);
-    let mut boat = Location::default();
     for m in moves {
-        let d = m.delta(&boat);
-        boat = boat + d;
+        mover.step(m);
     }
-    Some(boat.manhattan_distance_from(&Location::default()))
 }
 
 fn parse_input(input: &File) -> Vec<Move> {
