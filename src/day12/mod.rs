@@ -3,8 +3,8 @@ use std::io::BufReader;
 use std::io::prelude::*;
 use std::ops::Add;
 
-pub trait Mover {
-    fn step(&mut self, m: Move) -> &Location;
+pub trait Movable {
+    fn move_step(&mut self, m: Move) -> &Location;
 }
 
 pub struct BoatByWaypoint {
@@ -21,8 +21,8 @@ impl BoatByWaypoint {
     }
 }
 
-impl Mover for BoatByWaypoint {
-    fn step(&mut self, m: Move) -> &Location {
+impl Movable for BoatByWaypoint {
+    fn move_step(&mut self, m: Move) -> &Location {
         let delta = m.delta_with_anchor(&self.waypoint, &self.location);
         if let Move::FORWARD(_) = m {
             self.location = self.location + delta;
@@ -44,8 +44,8 @@ impl BoatByItself {
     }
 }
 
-impl Mover for BoatByItself {
-    fn step(&mut self, m: Move) -> &Location {
+impl Movable for BoatByItself {
+    fn move_step(&mut self, m: Move) -> &Location {
         self.location = self.location + m.delta(&self.location);
         &self.location
     }
@@ -135,10 +135,10 @@ impl Move {
     }
 }
 
-pub fn solve(input: &File, mover: &mut impl Mover) {
+pub fn solve(input: &File, mover: &mut impl Movable) {
     let moves = parse_input(input);
     for m in moves {
-        mover.step(m);
+        mover.move_step(m);
     }
 }
 
