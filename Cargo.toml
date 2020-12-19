@@ -8,3 +8,6 @@ edition = "2018"
 
 [dependencies]
 regex = "1"
+num-bigint-dig = "0.6.1"
+num-traits = "0.2.14"
+num-integer = "0.1"
