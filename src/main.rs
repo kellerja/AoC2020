@@ -169,9 +169,15 @@ pub fn solve_day13_part_2() {
 
 pub fn solve_day14() {
     let input = open_file(&get_filename("day14"));
-    print_result("Day 14", &day14::solve(&input))
+    print_result("Day 14", &day14::solve(&input, day14::InputVersion::V1))
+}
+
+pub fn solve_day14_part_2() {
+    let input = open_file(&get_filename("day14"));
+    print_result("Day 14 part 2", &day14::solve(&input, day14::InputVersion::V2))
 }
 
 fn main() {
     solve_day14();
+    solve_day14_part_2();
 }
