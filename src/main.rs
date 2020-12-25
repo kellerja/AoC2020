@@ -180,9 +180,13 @@ pub fn solve_day14_part_2() {
 
 pub fn solve_day15() {
     let input = open_file(&get_filename("day15"));
-    print_result("Day 15", &day15::solve(&input))
+    print_result("Day 15", &day15::solve(&input, 2020))
+}
+
+pub fn solve_day15_part_2() {
+    let input = open_file(&get_filename("day15"));
+    print_result("Day 15 part 2", &day15::solve(&input, 30_000_000))
 }
 
 fn main() {
-    solve_day15();
 }
