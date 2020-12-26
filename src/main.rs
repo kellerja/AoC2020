@@ -1,3 +1,6 @@
+#[macro_use]
+extern crate lazy_static;
+
 use std::fs::File;
 use std::fmt;
 
@@ -195,4 +198,5 @@ pub fn solve_day16() {
 }
 
 fn main() {
+    solve_day16();
 }
