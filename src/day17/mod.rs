@@ -2,24 +2,36 @@ use std::fs::File;
 use std::io::BufReader;
 use std::io::prelude::*;
 use std::collections::{HashSet, HashMap};
+use radix_fmt::radix;
 
 #[derive(Hash, Eq, PartialEq, Clone)]
-struct Coordinate(i64, i64, i64);
+struct Coordinate {
+    coordinates: Vec<i64>
+}
 
 impl Coordinate {
+    fn delta(&self, delta: &[i64]) -> Coordinate {
+        Coordinate {
+            coordinates: self.coordinates.iter().zip(delta.iter()).map(|(c, dc)| c + dc).collect()
+        }
+    }
+
     fn neighbours(&self) -> Vec<Coordinate> {
-        const DELTAS: [(i64, i64, i64); 26] = [
-            (-1, -1, -1),  (-1, -1,  0),  (-1, -1, 1),
-            (-1,  0, -1),  (-1,  0,  0),  (-1,  0, 1),
-            (-1,  1, -1),  (-1,  1,  0),  (-1,  1, 1),
-            ( 0, -1, -1),  ( 0, -1,  0),  ( 0, -1, 1),
-            ( 0,  0, -1),/*( 0,  0,  0),*/( 0,  0, 1),
-            ( 0,  1, -1),  ( 0,  1,  0),  ( 0,  1, 1),
-            ( 1, -1, -1),  ( 1, -1,  0),  ( 1, -1, 1),
-            ( 1,  0, -1),  ( 1,  0,  0),  ( 1,  0, 1),
-            ( 1,  1, -1),  ( 1,  1,  0),  ( 1,  1, 1)
-            ];
-        DELTAS.iter().map(|(dx, dy, dz)| Coordinate(self.0 + dx, self.1 + dy, self.2 + dz)).collect()
+        const CHOICES: [i64; 3] = [-1, 0, 1];
+        let dimensions = self.coordinates.len() as u8;
+        let deltas_count = CHOICES.len().pow(dimensions as u32);
+        let mut neighbours = Vec::with_capacity((deltas_count - 1) as usize);
+        for i in 0..deltas_count {
+            let choices_index = format!("{}", radix(i, CHOICES.len() as u8));
+            let choices_index = "0".repeat(dimensions as usize - choices_index.len()) + &choices_index;
+            let delta: Vec<i64> = choices_index.chars()
+                .map(|idx| CHOICES[idx.to_digit(10).unwrap() as usize]).collect();
+            if delta == vec![0; delta.len()] {
+                continue;
+            }
+            neighbours.push(self.delta(&delta));
+        }
+        neighbours
     }
 }
 
@@ -68,8 +80,8 @@ impl Iterator for Cycles {
     }
 }
 
-pub fn solve(input: &File) -> Option<usize> {
-    let mut initial_state = parse_input(input).into_iter();
+pub fn solve(input: &File, default_extra_dimensions: &[i64]) -> Option<usize> {
+    let mut initial_state = parse_input(input, default_extra_dimensions).into_iter();
     for _ in 0..5 {
         initial_state.next();
     }
@@ -77,15 +89,16 @@ pub fn solve(input: &File) -> Option<usize> {
     Some(final_state.active_cubes.len())
 }
 
-fn parse_input(input: &File) -> ConwayCubesState {
-    let z = 1;
+fn parse_input(input: &File, default_extra_dimensions: &[i64]) -> ConwayCubesState {
     let lines = BufReader::new(input).lines();
     let mut active_cubes = HashSet::new();
     for (y, line) in lines.enumerate() {
         let line = line.unwrap();
         for (x, cube_state) in line.chars().enumerate() {
             if cube_state == '#' {
-                active_cubes.insert(Coordinate(x as i64, y as i64, z));
+                let mut coordinates = vec![x as i64, y as i64];
+                coordinates.extend(default_extra_dimensions);
+                active_cubes.insert(Coordinate { coordinates });
             }
         }
     }
