@@ -21,6 +21,7 @@ mod day14;
 mod day15;
 mod day16;
 mod day17;
+mod day18;
 
 fn open_file(filename: &str) -> File {
     File::open(&filename).expect(&format!("Could not open file {}", filename))
@@ -213,7 +214,11 @@ pub fn solve_day17_part_2() {
     print_result("Day 17 part 2", &day17::solve(&input, &vec![0, 0]))
 }
 
+pub fn solve_day18() {
+    let input = open_file(&get_filename("day18"));
+    print_result("Day 18", &day18::solve(&input))
+}
+
 fn main() {
-    solve_day17();
-    solve_day17_part_2();
+    solve_day18();
 }
