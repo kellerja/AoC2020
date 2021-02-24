@@ -102,12 +102,12 @@ impl Evaluate for i64 {
     }
 }
 
-pub fn solve(input: &File) -> Option<i64> {
-    let expressions = parse_input(input);
+pub fn solve(input: &File, is_addition_precedence: bool) -> Option<i64> {
+    let expressions = parse_input(input, is_addition_precedence);
     Some(expressions.iter().map(|expr| expr.evaluate()).sum())
 }
 
-fn parse_parentheses(remaining: &mut dyn Iterator<Item=char>) -> Box<dyn Evaluate> {
+fn parse_parentheses(remaining: &mut dyn Iterator<Item=char>, is_addition_precedence: bool) -> Box<dyn Evaluate> {
     let mut open_parentheses_count = 1;
     let inner = parse_expression(&mut remaining.take_while(|&c| {
         if c == '(' {
@@ -116,7 +116,7 @@ fn parse_parentheses(remaining: &mut dyn Iterator<Item=char>) -> Box<dyn Evaluat
             open_parentheses_count -= 1;
         }
         open_parentheses_count > 0
-    }));
+    }), is_addition_precedence);
     let _closing_tag = remaining.next();
     return inner
 }
@@ -127,11 +127,11 @@ fn parse_constant(first: char, remaining: &mut dyn Iterator<Item=char>) -> Box<d
     Box::from(constant.parse::<i64>().unwrap())
 }
 
-fn parse_right_side(remaining: &mut dyn Iterator<Item=char>) -> Box<dyn Evaluate> {
+fn parse_right_side(remaining: &mut dyn Iterator<Item=char>, is_addition_precedence: bool) -> Box<dyn Evaluate> {
     while let Some(c) = remaining.next() {
         match c {
             _w if c.is_whitespace() => continue,
-            '(' =>  return parse_parentheses(remaining),
+            '(' =>  return parse_parentheses(remaining, is_addition_precedence),
             c0 if c.is_digit(RADIX) => return parse_constant(c0, remaining),
             _ => panic!("Unexpected right side char {}. Remaining: {}", c, remaining.collect::<String>())
         }
@@ -139,20 +139,24 @@ fn parse_right_side(remaining: &mut dyn Iterator<Item=char>) -> Box<dyn Evaluate
     panic!("Parsing right side failed. Remaining: {}", remaining.collect::<String>())
 }
 
-fn parse_expression(remaining: &mut dyn Iterator<Item=char>) -> Box<dyn Evaluate> {
+fn parse_expression(remaining: &mut dyn Iterator<Item=char>, is_addition_precedence: bool) -> Box<dyn Evaluate> {
     let mut prev_expression: Option<Box<dyn Evaluate>> = None;
     while let Some(c) = remaining.next() {
         prev_expression = Some(match c {
             _w if c.is_whitespace() => continue,
             '*' => {
-                let b = parse_right_side(remaining);
+                let b = if is_addition_precedence {
+                    parse_expression(remaining, is_addition_precedence)
+                } else {
+                    parse_right_side(remaining, is_addition_precedence)
+                };
                 Box::from(Multiplication{ a: prev_expression.unwrap(), b: Box::from(b) })
             },
             '+' => {
-                let b = parse_right_side(remaining);
+                let b = parse_right_side(remaining, is_addition_precedence);
                 Box::from(Addition{ a: prev_expression.unwrap(), b: Box::from(b) })
             },
-            '(' => parse_parentheses(remaining),
+            '(' => parse_parentheses(remaining, is_addition_precedence),
             ')' => panic!("Unexpected closing tag. Remaining: {}", remaining.collect::<String>()),
             c0 if c.is_digit(RADIX) => parse_constant(c0, remaining),
             _ => panic!("Unexpected right side char {}. Remaining: {}", c, remaining.collect::<String>())
@@ -161,10 +165,10 @@ fn parse_expression(remaining: &mut dyn Iterator<Item=char>) -> Box<dyn Evaluate
     prev_expression.unwrap()
 }
 
-fn parse_input(input: &File) -> Vec<Expression> {
+fn parse_input(input: &File, is_addition_precedence: bool) -> Vec<Expression> {
     BufReader::new(input).lines().map(|line| {
         let line = line.unwrap();
         let mut chars = line.chars();
-        Expression { expr: parse_expression(&mut chars) }
+        Expression { expr: parse_expression(&mut chars, is_addition_precedence) }
     }).collect()
 }
